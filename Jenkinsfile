@@ -24,7 +24,7 @@ pipeline {
 
     stage('Test image') {
       steps {
-        echo "All tests passed"
+        echo "✅ All tests passed"
       }
     }
 
@@ -32,6 +32,8 @@ pipeline {
       steps {
         script {
           docker.withRegistry('', registryCredential) {
+            // push versionnée et latest
+            dockerImage.push("${BUILD_NUMBER}")
             dockerImage.push("latest")
           }
         }
@@ -41,7 +43,11 @@ pipeline {
     stage('Deploy image') {
       steps {
         script {
-          sh "docker run -d -p 8083:80 ${registry}:latest"
+          sh '''
+          docker stop testtp2 || true
+          docker rm testtp2 || true
+          docker run -d --name testtp2 -p 8082:80 ${registry}:latest
+          '''
         }
       }
     }
