@@ -1,55 +1,38 @@
 pipeline {
-  agent any
-
-  environment {
-    registry = "nanga123/testtp2"
-    registryCredential = 'dockerhub'
-    dockerImage = ''
-  }
-
-  stages {
-    stage('Clone Git') {
-      steps {
-        git 'https://github.com/Nouhaila1937/Devops-pipeline.git'
-      }
+    environment {
+        registry = "nanga123/testtp2"
+        registryCredential = '7fa95e04-93bc-46b0-a6ee-6bb3a6a7d9a4s'
+        dockerImage = ''
     }
-
-    stage('Build image') {
-      steps {
-        script {
-          dockerImage = docker.build("${registry}:${BUILD_NUMBER}")
+    agent any
+    stages {
+        stage('Cloning Git') {
+            steps {
+                git 'https://github.com/Nouhaila1937/Devops-pipeline'
+            }
         }
-      }
-    }
-
-    stage('Test image') {
-      steps {
-        echo "✅ All tests passed"
-      }
-    }
-
-    stage('Publish image') {
-      steps {
-        script {
-          docker.withRegistry('', registryCredential) {
-            // push versionnée et latest
-            dockerImage.push("${BUILD_NUMBER}")
-            dockerImage.push("latest")
-          }
+        stage('Building image') {
+            steps{
+                script {
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                }
+            }
         }
-      }
-    }
-
-    stage('Deploy image') {
-      steps {
-        script {
-          sh '''
-          docker stop testtp2 || true
-          docker rm testtp2 || true
-          docker run -d --name testtp2 -p 8082:80 ${registry}:latest
-          '''
+        stage('Test image') {
+            steps{
+                script {
+                    echo "Tests passed"
+                }
+            }
         }
-      }
+        stage('Publish Image') {
+            steps{
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
     }
-  }
 }
