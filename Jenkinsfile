@@ -6,11 +6,13 @@ pipeline {
     }
     agent any
     stages {
-        stage('Cloning Git') {
-            steps {
-                git 'https://github.com/Nouhaila1937/Devops-pipeline'
-            }
-        }
+  stage('Cloning Git') {
+    steps {
+        git branch: 'main',
+            url: 'https://github.com/Nouhaila1937/Devops-pipeline'
+    }
+}
+
         stage('Building image') {
             steps{
                 script {
