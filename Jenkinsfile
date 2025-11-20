@@ -36,5 +36,23 @@ pipeline {
                 }
             }
         }
+          
+        stage('Deploy image') {
+            steps {
+                script {
+                    // Arrêter et supprimer l'ancien conteneur
+                    bat '''
+                        docker stop web-tp4 2>nul || echo Conteneur non trouve
+                        docker rm web-tp4 2>nul || echo Conteneur non trouve
+                    '''
+                    
+                    // Déployer le nouveau conteneur
+                    bat "docker run -d --name web-tp4 -p 8081:80 ${registry}:${BUILD_NUMBER}"
+                    
+                    echo "Application deployee sur http://localhost:8081"
+                }
+            }
+        }
     }
 }
+  
