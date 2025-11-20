@@ -1,7 +1,7 @@
 pipeline {
     environment {
         registry = "nanga123/testtp2"
-        registryCredential = '7fa95e04-93bc-46b0-a6ee-6bb3a6a7d9a4s'
+        registryCredential = '7fa95e04-93bc-46b0-a6ee-6bb3a6a7d9a4'
         dockerImage = ''
     }
     agent any
